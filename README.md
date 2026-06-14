@@ -57,7 +57,7 @@ Both algorithms independently identified **5 customer segments** with consistent
 ## Tech Stack
 
 ```
-Python · pandas · numpy · scikit-learn · scipy · matplotlib · seaborn · squarify · kneed · plotly
+Python · pandas · numpy · scikit-learn · scipy · matplotlib · seaborn · squarify · kneed · plotly · Flask · joblib
 ```
 
 ---
@@ -66,8 +66,14 @@ Python · pandas · numpy · scikit-learn · scipy · matplotlib · seaborn · s
 
 ```
 customer-segmentation/
-├── customer-segmentation-kmeans-hierarchial.ipynb
+├── income-spend-cluster-analysis.ipynb
 ├── Mall_Customers.csv
+├── app.py
+├── templates/
+│   └── index.html
+├── artifacts/
+│   ├── model.pkl
+│   └── scaler.pkl
 ├── requirements.txt
 └── README.md
 ```
@@ -78,5 +84,37 @@ customer-segmentation/
 
 ```bash
 pip install -r requirements.txt
-jupyter notebook customer-segmentation-kmeans-hierarchial.ipynb
+jupyter notebook income-spend-cluster-analysis.ipynb
 ```
+
+---
+
+## Deployment
+
+The project includes a **Flask web application** that serves the trained K-Means model as an interactive prediction API.
+
+### How it works
+
+1. The trained K-Means model and `StandardScaler` are serialised via `joblib` and saved to the `artifacts/` directory.
+2. `app.py` loads these artifacts at startup and exposes two routes:
+   - `GET /` — renders the input form
+   - `POST /predict` — accepts Annual Income and Spending Score, scales the input, runs inference, and returns the predicted customer segment.
+
+### Run the web app locally
+
+```bash
+pip install flask joblib numpy
+python app.py
+```
+
+Then open [http://localhost:5000](http://localhost:5000) in your browser.
+
+### Customer Segments served by the app
+
+| Cluster | Customer Type | Segment Name |
+|---|---|---|
+| 0 | Regular Customer | Average Customers |
+| 1 | Premium Customer | High Income — High Spending |
+| 2 | Value-Oriented Customer | Low Income — High Spending |
+| 3 | Conservative Customer | High Income — Low Spending |
+| 4 | Budget Customer | Low Income — Low Spending |
